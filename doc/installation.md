@@ -9,7 +9,7 @@ If you use Symfony Flex
 
 ```console
 $ cd your-symfony-project/
-$ composer require --dev easycorp/easy-deploy-bundle
+$ composer require --dev aritti/easy-deploy-bundle
 ```
 
 And that's it! You can skip the rest of this article.
@@ -21,7 +21,7 @@ If you don't use Symfony Flex
 
 ```console
 $ cd your-symfony-project/
-$ composer require --dev easycorp/easy-deploy-bundle
+$ composer require --dev aritti/easy-deploy-bundle
 ```
 
 **Step 2.** Enable the bundle:
