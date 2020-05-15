@@ -21,6 +21,7 @@ class Server
     private const LOCALHOST_ADDRESSES = ['localhost', 'local', '127.0.0.1'];
     private $roles;
     private $user;
+    private $password;
     private $host;
     private $port;
     private $properties;
@@ -34,6 +35,8 @@ class Server
         $params = parse_url(Str::startsWith($dsn, 'ssh://') ? $dsn : 'ssh://'.$dsn);
 
         $this->user = $params['user'] ?? null;
+
+        $this->password = $params['pass'] ?? null;
 
         if (!isset($params['host'])) {
             throw new ServerConfigurationException($dsn, 'The host is missing (define it as an IP address or a host name)');
@@ -93,13 +96,21 @@ class Server
         if ($this->isLocalHost()) {
             return '';
         }
-
-        return sprintf('ssh %s%s%s%s',
+        
+        $connectionString = sprintf('ssh %s%s%s%s',
             $this->properties->get('use_ssh_agent_forwarding') ? '-A ' : '',
             $this->user ?? '',
             $this->user ? '@'.$this->host : $this->host,
             $this->port ? ' -p '.$this->port : ''
         );
+
+        if ($this->password) {
+            $connectionString = sprintf('sshpass -p %s '.$connectionString,
+                "'".$this->password."'"
+            );
+        }
+
+        return $connectionString;
     }
 
     public function getRoles(): array
@@ -110,6 +121,11 @@ class Server
     public function getUser(): ?string
     {
         return $this->user;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
     }
 
     public function getHost(): string

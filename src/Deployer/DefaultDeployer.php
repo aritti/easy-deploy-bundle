@@ -37,6 +37,12 @@ abstract class DefaultDeployer extends AbstractDeployer
         $allServers = $this->getServers()->findAll();
         $appServers = $this->getServers()->findByRoles([Server::ROLE_APP]);
 
+        $serversWithPassword = $this->getServers()->findWithPassword();
+
+        if (count($serversWithPassword)) {
+            $requirements[] = new CommandExists([$localhost], 'sshpass');
+        }
+
         $requirements[] = new CommandExists([$localhost], 'git');
         $requirements[] = new CommandExists([$localhost], 'ssh');
 
