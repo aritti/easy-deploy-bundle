@@ -106,14 +106,14 @@ final class DefaultConfiguration extends AbstractConfiguration
         //   https://github.com/<user>/<repo>
         //   https://bitbucket.org/<user>/<repo>
         //   https://gitlab.com/<user>/<repo>.git
-        if (Str::startsWith($url, 'http://') || Str::startsWith($url, 'https://')) {
+        /*if (Str::startsWith($url, 'http://') || Str::startsWith($url, 'https://')) {
             $sshUrl = preg_replace('/https?:\/\/(?<server>.*)\/(?<vendor>.*)\/(?<repository>.*)/', 'git@$1:$2/$3', $url);
             if (!Str::endsWith($sshUrl, '.git')) {
                 $sshUrl .= '.git';
             }
 
             throw new InvalidConfigurationException(sprintf('The repository URL must use the SSH syntax instead of the HTTPs syntax to make it work on any remote server. Replace "%s" by "%s"', $url, $sshUrl));
-        }
+        }*/
 
         $this->repositoryUrl = $url;
 
