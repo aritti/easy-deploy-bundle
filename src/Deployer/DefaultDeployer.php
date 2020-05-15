@@ -266,7 +266,7 @@ abstract class DefaultDeployer extends AbstractDeployer
         $this->runRemote(sprintf('if [ -d {{ deploy_dir }}/repo ]; then cd {{ deploy_dir }}/repo && git fetch -q origin && git fetch --tags -q origin && git reset -q --hard %s && git clean -q -d -x -f; else git clone -q -b %s %s {{ deploy_dir }}/repo && cd {{ deploy_dir }}/repo && git checkout -q -b deploy %s; fi', $repositoryRevision, $this->getConfig(Option::repositoryBranch), $this->getConfig(Option::repositoryUrl), $repositoryRevision));
 
         $this->log('<h3>Copying the updated code to the new release directory</>');
-        $this->runRemote(sprintf('cp -RPp {{ deploy_dir }}/repo/* {{ project_dir }}'));
+        $this->runRemote(sprintf('cp -RPp {{ deploy_dir }}/repo/. {{ project_dir }}'));
     }
 
     private function doCreateCacheDir(): void
@@ -297,7 +297,7 @@ abstract class DefaultDeployer extends AbstractDeployer
         foreach ($this->getConfig(Option::sharedFiles) as $sharedFile) {
             $sharedFileParentDir = dirname($sharedFile);
             $this->runRemote(sprintf('mkdir -p {{ deploy_dir }}/shared/%s', $sharedFileParentDir));
-            $this->runRemote(sprintf('touch {{ deploy_dir }}/shared/%s', $sharedFile));
+            $this->runRemote(sprintf('cp {{ project_dir }}/%s {{ deploy_dir }}/shared/%s', $sharedFile, $sharedFile));
             $this->runRemote(sprintf('ln -nfs {{ deploy_dir }}/shared/%s {{ project_dir }}/%s', $sharedFile, $sharedFile));
         }
     }
