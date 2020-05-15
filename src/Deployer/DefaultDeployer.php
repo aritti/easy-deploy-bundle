@@ -47,7 +47,6 @@ abstract class DefaultDeployer extends AbstractDeployer
         $requirements[] = new CommandExists([$localhost], 'ssh');
 
         $requirements[] = new AllowsLoginViaSsh($allServers);
-        $requirements[] = new CommandExists($appServers, $this->getConfig(Option::remoteComposerBinaryPath));
         if ('acl' === $this->getConfig(Option::permissionMethod)) {
             $requirements[] = new CommandExists($appServers, 'setfacl');
         }
@@ -344,10 +343,24 @@ abstract class DefaultDeployer extends AbstractDeployer
         if (true === $this->getConfig(Option::updateRemoteComposerBinary)) {
             $this->log('<h2>Self Updating the Composer binary</>');
             $this->runRemote(sprintf('%s self-update', $this->getConfig(Option::remoteComposerBinaryPath)));
+            $this->runRemote(
+                sprintf(
+                    '%s %s self-update',
+                    $this->getConfig(Option::remotePhpBinaryPath),
+                    $this->getConfig(Option::remoteComposerBinaryPath)
+                )
+            );
         }
 
         $this->log('<h2>Installing Composer dependencies</>');
-        $this->runRemote(sprintf('%s install %s', $this->getConfig(Option::remoteComposerBinaryPath), $this->getConfig(Option::composerInstallFlags)));
+        $this->runRemote(
+            sprintf(
+                '%s %s install %s',
+                $this->getConfig(Option::remotePhpBinaryPath),
+                $this->getConfig(Option::remoteComposerBinaryPath),
+                $this->getConfig(Option::composerInstallFlags)
+            )
+        );
     }
 
     private function doInstallWebAssets(): void
@@ -396,7 +409,14 @@ abstract class DefaultDeployer extends AbstractDeployer
     private function doOptimizeComposer(): void
     {
         $this->log('<h2>Optimizing Composer autoloader</>');
-        $this->runRemote(sprintf('%s dump-autoload %s', $this->getConfig(Option::remoteComposerBinaryPath), $this->getConfig(Option::composerOptimizeFlags)));
+        $this->runRemote(
+            sprintf(
+                '%s %s dump-autoload %s',
+                $this->getConfig(Option::remotePhpBinaryPath),
+                $this->getConfig(Option::remoteComposerBinaryPath),
+                $this->getConfig(Option::composerOptimizeFlags)
+            )
+        );
     }
 
     private function doCreateSymlink(): void
