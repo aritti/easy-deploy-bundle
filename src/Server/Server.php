@@ -97,7 +97,7 @@ class Server
             return '';
         }
         
-        $connectionString = sprintf('ssh %s%s%s%s',
+        $connectionString = sprintf('ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=15 %s%s%s%s',
             $this->properties->get('use_ssh_agent_forwarding') ? '-A ' : '',
             $this->user ?? '',
             $this->user ? '@'.$this->host : $this->host,
