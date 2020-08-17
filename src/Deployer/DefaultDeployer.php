@@ -270,13 +270,13 @@ abstract class DefaultDeployer extends AbstractDeployer
         $repositoryRevision = $this->doGetcodeRevision();
 
         $this->log('<h2>Updating code base with remote_cache strategy</>');
-        $this->runRemote(sprintf('if [ -d {{ deploy_dir }}/repo ]; then cd {{ deploy_dir }}/repo && git fetch -q origin && git fetch --tags -q origin && git reset -q --hard %s && git clean -q -d -x -f; else git clone -q -b %s %s {{ deploy_dir }}/repo && cd {{ deploy_dir }}/repo && git checkout -q -b deploy %s; fi', $repositoryRevision, $this->getConfig(Option::repositoryBranch), $this->getConfig(Option::repositoryUrl), $repositoryRevision));
+        $this->runRemote(sprintf('if [ -d {{ deploy_dir }}/repository ]; then cd {{ deploy_dir }}/repository && git fetch -q origin && git fetch --tags -q origin && git reset -q --hard %s && git clean -q -d -x -f; else git clone -q -b %s %s {{ deploy_dir }}/repository && cd {{ deploy_dir }}/repository && git checkout -q -b deploy %s; fi', $repositoryRevision, $this->getConfig(Option::repositoryBranch), $this->getConfig(Option::repositoryUrl), $repositoryRevision));
 
         $this->log('<h3>Get submodules</>');
-        $this->runRemote('cd {{ deploy_dir }}/repo && git submodule update --init --recursive');
+        $this->runRemote('cd {{ deploy_dir }}/repository && git submodule update --init --recursive');
 
         $this->log('<h3>Copying the updated code to the new release directory</>');
-        $this->runRemote(sprintf('cp -RPp {{ deploy_dir }}/repo/{.env,}* {{ project_dir }}'));
+        $this->runRemote(sprintf('cp -RPp {{ deploy_dir }}/repository/{.env,}* {{ project_dir }}'));
     }
 
     private function doCreateCacheDir(): void
